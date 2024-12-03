@@ -478,7 +478,7 @@ append_git_delta_to_gitconfig() {
     sudo touch "$gitconfig_path"
 
     # Append the configuration
-    sudo cat <<EOL >> "$gitconfig_path"
+    cat <<EOL >> "$gitconfig_path"
 
 [core]
     pager = delta
