@@ -208,7 +208,7 @@ setup_sshd() {
 # Function to setup firewall
 setup_firewall(){
     if prompt_user "Do you want to setup firewall?"; then
-        iptables_installed=1
+        export iptables_installed=1
         echo "Setting up firewall rules..."
         # Set Default Policies
         echo "Setting up default policies..."
@@ -330,7 +330,7 @@ install_configure_cockpit() {
             echo "Firewall rules have been added to allow Cockpit."
         fi
 
-        cockpit_installed=1
+        export cockpit_installed=1
 
         echo "Cockpit has been installed and configured successfully."
 
@@ -369,8 +369,8 @@ get_nginx_host_details(){
 
     # If the user input is not empty, update the variables; otherwise, use default
     if [[ -n "$nginxhostname" ]]; then
-        nginx_hostname="$nginxhostname"
-        nginx_hostname_domain="${nginxhostname%%.*}"
+        export nginx_hostname="$nginxhostname"
+        export nginx_hostname_domain="${nginxhostname%%.*}"
     fi
 
     # Print the updated variables
@@ -995,7 +995,7 @@ pre_install_nginx() {
 
 post_install_nginx() {
     # set flag to true
-    nginx_installed=1
+    export nginx_installed=1
     get_nginx_host_details
     sudo mkdir -p /etc/nginx/conf.d
     sudo touch "/etc/nginx/conf.d/$nginx_hostname_domain.conf"
