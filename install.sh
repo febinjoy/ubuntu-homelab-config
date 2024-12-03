@@ -144,7 +144,7 @@ install_lazygit() {
 
         echo "Installing LazyGit..."
         local LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        sudo curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
         tar xf lazygit.tar.gz lazygit
         sudo install lazygit -D -t /usr/local/bin/
     else
@@ -348,8 +348,8 @@ append_line_to_file() {
     # Check if the file exists, create it if it doesn't
     if [[ ! -f "$file" ]]; then
         echo "File $file does not exist. Creating file..."
-        mkdir -p "$(dirname "$file")"
-        touch "$file"
+        sudo mkdir -p "$(dirname "$file")"
+        sudo touch "$file"
     fi
 
     # Append the line to the file if it doesn't already exist in the file
@@ -458,10 +458,10 @@ download_file() {
     local dest_path="$2"
 
     # Create the destination directory if it doesn't exist
-    mkdir -p "$(dirname "$dest_path")"
+    sudo mkdir -p "$(dirname "$dest_path")"
 
     # Download the file
-    wget "$url" -O "$dest_path"
+    sudo wget "$url" -O "$dest_path"
 
     # Confirm the file was saved
     if [[ -f "$dest_path" ]]; then
@@ -475,10 +475,10 @@ append_git_delta_to_gitconfig() {
     local gitconfig_path="$HOME/.gitconfig"
 
     # Create the .gitconfig file if it doesn't exist
-    touch "$gitconfig_path"
+    sudo touch "$gitconfig_path"
 
     # Append the configuration
-    cat <<EOL >> "$gitconfig_path"
+    sudo cat <<EOL >> "$gitconfig_path"
 
 [core]
     pager = delta
@@ -630,17 +630,17 @@ container_jellyfin(){
 
     if prompt_user "Do you want to install container for $package_name?"; then
         echo "Installing $package_name..."
-        mkdir -p ~/.config/containers/$package_name/config
-        mkdir -p ~/.config/containers/$package_name/cache
-        mkdir -p ~/data/media
+        sudo mkdir -p ~/.config/containers/$package_name/config
+        sudo mkdir -p ~/.config/containers/$package_name/cache
+        sudo mkdir -p ~/data/media
 
-        chmod -R 755 ~/.config/containers/$package_name ~/data/media
+        sudo chmod -R 755 ~/.config/containers/$package_name ~/data/media
 
-        podman volume create --opt device="$HOME/.config/containers/$package_name/config" --opt type=none --opt o=bind "$package_name-config"
-        podman volume create --opt device="$HOME/.config/containers/$package_name/cache" --opt type=none --opt o=bind "$package_name-cache"
-        podman volume create --opt device="$HOME/data/media" --opt type=none --opt o=bind "$package_name-media"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/config" --opt type=none --opt o=bind "$package_name-config"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/cache" --opt type=none --opt o=bind "$package_name-cache"
+        sudo podman volume create --opt device="$HOME/data/media" --opt type=none --opt o=bind "$package_name-media"
 
-        podman run -d \
+        sudo podman run -d \
         --name $package_name \
         --restart=always \
         -p 8096:8096 \
@@ -676,7 +676,7 @@ container_jellyfin(){
 create_postgresql_pod() {
     if prompt_user "Do you want to install and configure Postgres and pgAdmin?"; then
         echo "Creating PostgreSQL Pod..."
-        podman pod create --name postgre-sql -p 9876:80
+        sudo podman pod create --name postgre-sql -p 9876:80
 
         container_postgres
         container_pgadmin
@@ -712,13 +712,13 @@ container_postgres() {
     user_name=$(echo "$user_name" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
     password=$(echo "$password" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
 
-    mkdir -p ~/.config/containers/$package_name
+    sudo mkdir -p ~/.config/containers/$package_name
 
-    chmod -R 755 ~/.config/containers/$package_name
+    sudo chmod -R 755 ~/.config/containers/$package_name
 
-    podman volume create --opt device="$HOME/.config/containers/$package_name" --opt type=none --opt o=bind "$package_name-volume"
+    sudo podman volume create --opt device="$HOME/.config/containers/$package_name" --opt type=none --opt o=bind "$package_name-volume"
 
-    podman run -d \
+    sudo podman run -d \
     --name $package_name \
     --pod postgre-sql \
     -d -e POSTGRES_USER="$username" \
@@ -740,13 +740,13 @@ container_pgadmin() {
     user_name=$(echo "$user_name" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
     password=$(echo "$password" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
 
-    mkdir -p ~/.config/containers/$package_name
+    sudo mkdir -p ~/.config/containers/$package_name
 
-    chmod -R 755 ~/.config/containers/$package_name
+    sudo chmod -R 755 ~/.config/containers/$package_name
 
-    podman volume create --opt device="$HOME/.config/containers/$package_name" --opt type=none --opt o=bind "$package_name-volume"
+    sudo podman volume create --opt device="$HOME/.config/containers/$package_name" --opt type=none --opt o=bind "$package_name-volume"
 
-    podman run -d \
+    sudo podman run -d \
     --name $package_name \
     --pod postgre-sql \
     -e "PGADMIN_DEFAULT_EMAIL=$user_name" \
@@ -763,13 +763,13 @@ container_node_red() {
 
     if prompt_user "Do you want to install container for $package_name?"; then
         echo "Installing $package_name..."
-        mkdir -p ~/.config/containers/$package_name
+        sudo mkdir -p ~/.config/containers/$package_name
 
-        chmod -R 755 ~/.config/containers/$package_name
+        sudo chmod -R 755 ~/.config/containers/$package_name
 
-        podman volume create --opt device="$HOME/.config/containers/$package_name" --opt type=none --opt o=bind "$package_name-data"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name" --opt type=none --opt o=bind "$package_name-data"
 
-        podman run -d \
+        sudo podman run -d \
         --name $package_name \
         --restart=always \
         -p 1880:1880 \
@@ -804,17 +804,17 @@ container_homarr() {
 
     if prompt_user "Do you want to install container for $package_name?"; then
         echo "Installing $package_name..."
-        mkdir -p ~/.config/containers/$package_name/configs
-        mkdir -p ~/.config/containers/$package_name/icons
-        mkdir -p ~/.config/containers/$package_name/data
+        sudo mkdir -p ~/.config/containers/$package_name/configs
+        sudo mkdir -p ~/.config/containers/$package_name/icons
+        sudo mkdir -p ~/.config/containers/$package_name/data
 
-        chmod -R 755 ~/.config/containers/$package_name
+        sudo chmod -R 755 ~/.config/containers/$package_name
 
-        podman volume create --opt device="$HOME/.config/containers/$package_name/configs" --opt type=none --opt o=bind "$package_name-configs"
-        podman volume create --opt device="$HOME/.config/containers/$package_name/icons" --opt type=none --opt o=bind "$package_name-icons"
-        podman volume create --opt device="$HOME/.config/containers/$package_name/data" --opt type=none --opt o=bind "$package_name-data"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/configs" --opt type=none --opt o=bind "$package_name-configs"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/icons" --opt type=none --opt o=bind "$package_name-icons"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/data" --opt type=none --opt o=bind "$package_name-data"
 
-        podman run -d \
+        sudo podman run -d \
         -p 7575:7575 \
         --name $package_name \
         -v $package_name-configs:/app/data/configs \
@@ -851,14 +851,14 @@ container_freshrss() {
 
     if prompt_user "Do you want to install container for $package_name?"; then
         echo "Installing $package_name..."
-        mkdir -p ~/.config/containers/$package_name/{data,extensions}
+        sudo mkdir -p ~/.config/containers/$package_name/{data,extensions}
 
-        chmod -R 755 ~/.config/containers/$package_name
+        sudo chmod -R 755 ~/.config/containers/$package_name
 
-        podman volume create --opt device="$HOME/.config/containers/$package_name/data" --opt type=none --opt o=bind "$package_name-data"
-        podman volume create --opt device="$HOME/.config/containers/$package_name/extensions" --opt type=none --opt o=bind "$package_name-extensions"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/data" --opt type=none --opt o=bind "$package_name-data"
+        sudo podman volume create --opt device="$HOME/.config/containers/$package_name/extensions" --opt type=none --opt o=bind "$package_name-extensions"
 
-        podman run -d \
+        sudo podman run -d \
         --name $package_name \
         --restart=unless-stopped \
         --log-opt max-size=10m \
@@ -1003,7 +1003,7 @@ post_install_nginx() {
 
 post_install_zsh() {
     echo "Setting up ZSH"
-    touch ~/.zsh_history
+    sudo touch ~/.zsh_history
     download_file "https://raw.githubusercontent.com/febinjoy/terminal-config/blob/main/zshrc" "$HOME/.zshrc"
 }
 
