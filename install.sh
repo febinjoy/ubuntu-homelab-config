@@ -20,7 +20,7 @@ cockpit_installed=0
 # Function to prompt the user
 prompt_user() {
     local question="$1"
-    echo -n "--------------------------------------------------------------------------------------"
+    echo -n -e "\n--------------------------------------------------------------------------------------\n"
     echo -n "$question (Y/n): "
     read -r response
     response=$(echo "$response" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
@@ -32,7 +32,7 @@ prompt_user() {
 
 # Function to confirm reopening the file
 confirm_reopen() {
-    echo -n "--------------------------------------------------------------------------------------"
+    echo -n -e "\n--------------------------------------------------------------------------------------\n"
     read -r -p "Do you want to reopen the file for editing? reply (yes/y/Y) to reopen. Any other key to continue: " answer
     answer=$(echo "$answer" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
     if [[ "$answer" != "yes" && "$answer" != "y" && "$answer" != "Y" ]]; then
