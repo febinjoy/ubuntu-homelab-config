@@ -407,7 +407,7 @@ server {
     server_name $server_name;
 
     location / {
-        proxy_pass http://$server_ip:$port_number;
+        proxy_pass $protocol://$server_ip:$port_number;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -693,7 +693,7 @@ create_postgresql_pod() {
         # Check if nginx is installed and add config
         if [[ $nginx_installed -eq 1 ]]; then
             echo "Adding nginx proxy settings for $package_name..."
-            append_nginx_conf 9876 $package_name
+            append_nginx_conf 9876 "$package_name"
         fi
     else
         echo "Skipping install and configuration of Postgres and pgAdmin."
