@@ -1008,7 +1008,7 @@ post_install_nginx() {
 
 post_install_zsh() {
     echo "Setting up ZSH"
-    sudo touch ~/.zsh_history
+    touch ~/.zsh_history
     download_file "https://raw.githubusercontent.com/febinjoy/terminal-config/blob/main/zshrc" "$HOME/.zshrc"
 }
 
