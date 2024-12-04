@@ -99,43 +99,47 @@ upgrade() {
 
 # Function to configure Git
 configure_git() {
-    echo "Configuring git..."
-    read -r -p "Enter your Name: " git_name
-    read -r -p "Enter your Email: " git_email
-
-    git_name=$(echo "$git_name" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
-    git_email=$(echo "$git_email" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
-
-    git config --global user.name "$git_name"
-    git config --global user.email "$git_email"
-
-    echo "Git has been configured with the following details:"
-    echo "Username: $git_name"
-    echo "Email: $git_email"
+    if prompt_user "Do you want to configure git?"; then
+        echo "Configuring git..."
+        read -r -p "Enter your Name: " git_name
+        read -r -p "Enter your Email: " git_email
+    
+        git_name=$(echo "$git_name" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
+        git_email=$(echo "$git_email" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
+    
+        git config --global user.name "$git_name"
+        git config --global user.email "$git_email"
+    
+        echo "Git has been configured with the following details:"
+        echo "Username: $git_name"
+        echo "Email: $git_email"
+    fi
 }
 
 # Function to generate SSH key and add it to the SSH agent
 setup_ssh() {
-    echo "Configuring SSH..."
-
-    sudo apt install -y openssh-server
-
-    read -r -p "Enter the email for SSH key: " ssh_email
-
-    ssh_email=$(echo "$ssh_email" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
-
-    ssh-keygen -t ed25519 -C "$ssh_email"
-
-    eval "$(ssh-agent -s)"
-    ssh-add ~/.ssh/id_ed25519
-
-    echo "SSH key generated and added to SSH agent."
-
-    echo "Here is your public key:"
-    cat ~/.ssh/id_ed25519.pub
-
-    echo "Please add this public key to your GitHub account."
-    read -r -p "Press enter to continue after adding the key to GitHub."
+    if prompt_user "Do you want to generate ssh key?"; then
+        echo "Configuring SSH..."
+    
+        sudo apt install -y openssh-server
+    
+        read -r -p "Enter the email for SSH key: " ssh_email
+    
+        ssh_email=$(echo "$ssh_email" | sed 's/^[ \t]*//;s/[ \t]*$//') # Trim leading and trailing whitespace
+    
+        ssh-keygen -t ed25519 -C "$ssh_email"
+    
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_ed25519
+    
+        echo "SSH key generated and added to SSH agent."
+    
+        echo "Here is your public key:"
+        cat ~/.ssh/id_ed25519.pub
+    
+        echo "Please add this public key to your GitHub account."
+        read -r -p "Press enter to continue after adding the key to GitHub."
+    fi
 }
 
 # Function to install LazyGit
