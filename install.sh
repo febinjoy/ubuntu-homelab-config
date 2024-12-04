@@ -595,7 +595,7 @@ setup_container_startup() {
     # This script will be executed on startup
     # Individual containers will add their start command to this file
     echo "Creating the start.sh script..."
-    sudo tee ~/.config/containers/start.sh > /dev/null <<EOL
+    tee ~/.config/containers/start.sh > /dev/null <<EOL
 #!/bin/bash
 EOL
 
@@ -680,6 +680,7 @@ container_jellyfin(){
 # Method to create PostgreSQL pod
 create_postgresql_pod() {
     if prompt_user "Do you want to install and configure Postgres and pgAdmin?"; then
+        $package_name="PostgreSQL"
         echo "Creating PostgreSQL Pod..."
         sudo podman pod create --name postgre-sql -p 9876:80
 
