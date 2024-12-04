@@ -1003,7 +1003,7 @@ post_install_nginx() {
     # set flag to true
     export nginx_installed=1
     get_nginx_host_details
-    sudo mkdir -p /etc/nginx/conf.d
+    sudo mkdir -p 
     sudo touch "/etc/nginx/conf.d/$nginx_hostname_domain.conf"
 }
 
